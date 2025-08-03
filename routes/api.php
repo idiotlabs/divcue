@@ -2,4 +2,4 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::post('/etl/dividend', [EtlWebhookController::class, 'store']);
+Route::post('/etl/dividend', [\App\Http\Controllers\EtlWebhookController::class, 'store']);
