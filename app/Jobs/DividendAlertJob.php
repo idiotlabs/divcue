@@ -28,7 +28,7 @@ class DividendAlertJob implements ShouldQueue
     {
         Log::info('DividendAlertJob received', ['id' => $this->dividendId]);
 
-        $dividend = Dividend::find($this->dividendId);
+        $dividend = Dividend::with('company')->find($this->dividendId);
         if (!$dividend) return;
 
         // (임시) 모든 사용자에게 전송 — 이후 alert_preferences 필터로 교체
