@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Dividend;
+use App\Models\User;
+use App\Notifications\DividendAlertNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -25,10 +28,11 @@ class DividendAlertJob implements ShouldQueue
     {
         Log::info('DividendAlertJob received', ['id' => $this->dividendId]);
 
-        /** ➜ 여기서
-         *   1. 사용자 alert_preferences 조회
-         *   2. Mail / Telegram 전송
-         *   3. 전송 결과 저장
-         */
+        $dividend = Dividend::find($this->dividendId);
+        if (!$dividend) return;
+
+        // (임시) 모든 사용자에게 전송 — 이후 alert_preferences 필터로 교체
+        User::whereNotNull('email')
+            ->each(fn($user) => $user->notify(new DividendAlertNotification($dividend)));
     }
 }
