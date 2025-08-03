@@ -9,4 +9,6 @@ class Dividend extends Model
 {
     /** @use HasFactory<\Database\Factories\DividendFactory> */
     use HasFactory;
+
+    protected $guarded = [];
 }
