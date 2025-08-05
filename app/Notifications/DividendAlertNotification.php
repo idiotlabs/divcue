@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Telegram\TelegramMessage;
 
 class DividendAlertNotification extends Notification implements ShouldQueue
 {
@@ -27,7 +28,7 @@ class DividendAlertNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'telegram'];
     }
 
     /**
@@ -45,6 +46,18 @@ class DividendAlertNotification extends Notification implements ShouldQueue
             ->line("지급예정일: {$this->dividend->payment_date}")
             ->action('상세 보기', url('/'))   // 추후 상세 페이지로 변경
             ->line('※ 본 알림은 투자 권유가 아닙니다.');
+    }
+
+    public function toTelegram($notifiable): TelegramMessage
+    {
+        $c = $this->dividend->company;
+
+        return TelegramMessage::create()
+            ->to(config('services.telegram.chat_id'))
+            ->content("💰 *{$c->name_kr}* 배당 공시\n"
+                ."금액: ₩".number_format($this->dividend->cash_amount)."\n"
+                ."기준일: {$this->dividend->record_date}")
+            ->button('상세 보기', url('/'));
     }
 
     /**
