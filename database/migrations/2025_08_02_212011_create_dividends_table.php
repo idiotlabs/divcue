@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');   // FK 제거
             $table->decimal('cash_amount', 12, 2);
             $table->date('record_date');
-            $table->date('ex_dividend_date');
-            $table->date('payment_date');
+            $table->date('ex_dividend_date')->nullable();
+            $table->date('payment_date')->nullable();
             $table->timestamps();
 
             $table->unique(['company_id', 'record_date']);

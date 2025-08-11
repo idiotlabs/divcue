@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramMessage;
 
-class DividendAlertNotification extends Notification implements ShouldQueue
+class DividendAlertNotification extends Notification
 {
     use Queueable;
 
@@ -28,7 +28,7 @@ class DividendAlertNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'telegram'];
+        return ['telegram'];
     }
 
     /**
@@ -52,12 +52,17 @@ class DividendAlertNotification extends Notification implements ShouldQueue
     {
         $c = $this->dividend->company;
 
-        return TelegramMessage::create()
-            ->to(config('services.telegram.chat_id'))
+        $telegram =TelegramMessage::create()
+            ->to(config('services.telegram-bot-api.chat_id'))
             ->content("💰 *{$c->name_kr}* 배당 공시\n"
                 ."금액: ₩".number_format($this->dividend->cash_amount)."\n"
-                ."기준일: {$this->dividend->record_date}")
-            ->button('상세 보기', url('/'));
+                ."기준일: {$this->dividend->record_date}");
+
+        if (app()->environment('production')) {
+            $telegram->button('상세 보기', config('app.url'));
+        }
+
+        return $telegram;
     }
 
     /**

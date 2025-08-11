@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\AlertPreference;
 use App\Models\Dividend;
 use App\Models\User;
 use App\Notifications\DividendAlertNotification;
@@ -26,13 +27,16 @@ class DividendAlertJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info('DividendAlertJob received', ['id' => $this->dividendId]);
-
         $dividend = Dividend::with('company')->find($this->dividendId);
         if (!$dividend) return;
 
-        // (임시) 모든 사용자에게 전송 — 이후 alert_preferences 필터로 교체
-        User::whereNotNull('email')
+        // (1) 이 회사에 대한 알림을 구독한 사용자 + 최소 금액 조건 충족
+        $targets = AlertPreference::where('company_id', $dividend->company_id)
+            ->where('min_amount', '<=', $dividend->cash_amount)
+            ->pluck('user_id');
+
+        // (2) Eloquent 한 번만 호출해 User 컬렉션 가져오기
+        User::whereIn('id', $targets)
             ->each(fn($user) => $user->notify(new DividendAlertNotification($dividend)));
     }
 }

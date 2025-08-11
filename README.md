@@ -56,6 +56,15 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Claude Code 설정
+
+이 프로젝트에서 AWS Bedrock을 통해 Claude Code를 사용하려면 다음 환경변수를 설정해야 합니다:
+
+```bash
+export AWS_PROFILE=comento-1
+export CLAUDE_CODE_USE_BEDROCK=1
+```
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
