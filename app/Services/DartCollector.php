@@ -57,19 +57,19 @@ class DartCollector
             if (!$items) break;
 
             // 첫 번째 페이지 결과를 샘플로 저장
-            if (!$sampleSaved && $page === 1) {
-                $this->saveSampleListResult([
-                    'timestamp' => now('Asia/Seoul')->toISOString(),
-                    'request_params' => [
-                        'bgn_de' => $from,
-                        'end_de' => $to,
-                        'page_no' => $page,
-                        'page_count' => self::PAGE_SIZE,
-                    ],
-                    'response' => $res
-                ]);
-                $sampleSaved = true;
-            }
+//            if (!$sampleSaved && $page === 1) {
+//                $this->saveSampleListResult([
+//                    'timestamp' => now('Asia/Seoul')->toISOString(),
+//                    'request_params' => [
+//                        'bgn_de' => $from,
+//                        'end_de' => $to,
+//                        'page_no' => $page,
+//                        'page_count' => self::PAGE_SIZE,
+//                    ],
+//                    'response' => $res
+//                ]);
+//                $sampleSaved = true;
+//            }
 
             $stats['pages']++;
             $stats['items'] += count($items);
@@ -102,10 +102,10 @@ class DartCollector
                 }
 
                 // 첫 번째 성공적인 ZIP을 샘플로 저장
-                if (!$zipSampleSaved) {
-                    $this->saveSampleZipFile($rceptNo, $zipBytes);
-                    $zipSampleSaved = true;
-                }
+//                if (!$zipSampleSaved) {
+//                    $this->saveSampleZipFile($rceptNo, $zipBytes);
+//                    $zipSampleSaved = true;
+//                }
 
                 // ─ (2) 본문에서 값 파싱
                 $parsed = $this->parseZipForFields($zipBytes);
@@ -148,7 +148,7 @@ class DartCollector
 
         Log::info("DartCollector done handled={$handled}");
         Log::info('DartCollector stats', $stats);
-        dump($stats);
+
         return $handled;
     }
 
